@@ -1,0 +1,75 @@
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+
+<div id="app">
+    <h1>Welcome to my Weather App!</h1>
+    <p>Input a city name</p>
+    <input v-model="cityNameIp">
+    <br><br>
+    <button v-on:click="GetWeather">Submit</button>
+
+    <hr>
+
+    <div v-if="error != null">
+        <p>Error: {{ error }}</p>
+    </div>
+
+    <div v-if=" obj2.city != null">
+        <h2>{{ obj2.city }} - weather info</h2>
+        <p>Country Code: {{ obj2.country }}</p>
+
+        <div v-if="obj2.rain == true">
+            <p><b>Rain?</b> Bring an umbrella, it will rain.</p>
+        </div>
+        <div v-else>
+            <p><b>Rain?</b> No rain for the next 5 days!</p>
+        </div>
+
+        <p><b>What should I pack for?</b> You should pack for a x climate.</p>
+        <br>
+        <p><b>Note:</b> Weather info taken at 12 noon for each day.</p>
+
+        <table>
+            <tr>
+                <th>Dates</th>
+                <th>Rainfall (mm)</th>
+                <th>Temperature (C)</th>
+                <th>Windspeed (km/hr)</th>
+            </tr>
+            <tr v-for="day in obj2.day">
+                <td>{{ day.dates }}</td>
+                <td>{{ day.rainfall }}</td>
+                <td>{{ day.temperature }}</td>
+                <td>{{ day.windspeed }}</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            error : null,
+            cityNameIp: null,
+            obj2 : {
+                city : null
+            }
+        },
+        methods: {
+            GetWeather: get_weather
+        }
+    })
+
+    function get_weather() {
+        console.log("get_weather called")
+        let prom = fetch("/city/" + this.cityNameIp)
+        prom.then(response => response.json())
+            .then(response => {
+                this.error = response.error; //set to null if there is no error
+                console.log(response);
+                this.obj2 = response;
+                console.log(this.obj2);
+            })
+    }
+</script>
