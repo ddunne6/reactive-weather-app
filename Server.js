@@ -7,7 +7,6 @@ const bodyparser = require('body-parser');
 const { maxHeaderSize } = require('http');
 let publicPath= path.resolve(__dirname,"public");
 
-// Body-parser middleware 
 app.use(bodyparser.urlencoded({extended:false})) 
 app.use(bodyparser.json()) 
 
@@ -16,18 +15,9 @@ app.get('/city/:city_name', sendweather);
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
 
 function sendweather(req, res) {
-    //let city = req.params.city_name;
-    // let country = null;
-    // let temperature = [];
-    //let dates = [];
-    //let windspeed = [];
-    //let rainfall = [];
+    var sumtemps = 0;   //sum of temperatures
 
-    //creating an object
-
-    var sumtemps = 0;
-
-    let obj = {
+    let obj = {         //object that will be sent back to client
         day : [
         ],
         rain : false,
@@ -36,7 +26,6 @@ function sendweather(req, res) {
         city : req.params.city_name,
         climate : null
     }
-    console.log(obj);
 
     console.log('Received a city called ' + obj.city);
 
@@ -46,12 +35,9 @@ function sendweather(req, res) {
     
     let prom = new Promise((resolve, reject) => {
         https.get(url, (response) => {
-            console.log("Doing a get on " + obj.city);
             if (response.statusCode === 200) {
-                console.log("City found on system!"); 
                 response.on("data", (data) => {
                     const wData = JSON.parse(data);
-                    //console.log(wData);
                     resolve(wData);
                 })
             } 
@@ -68,46 +54,41 @@ function sendweather(req, res) {
     prom.then((wData) => {
     //parser data
         obj.country = wData.city.country;
-        var n = 0
-        //console.log(wData.city.country);
+        var n = 0; //counts number of days, should be 5
         for (var i=0 ; i < wData.list.length ; i++) {
-            //console.log("i = ", i);
-            //console.log(wData.list[i]["weather"][0]["main"]);
-            console.log(wData.list[i].dt_txt);
             var dt = new Date(wData.list[i].dt_txt);
             var hr = dt.getUTCHours();
             var day = dt.getDate() + "/" + dt.getMonth() + "/" + dt.getFullYear();
-            console.log(hr);
             if (hr == 12) { //getting data for 12 noon
                 //checking if it rains for this day at 12 noon
                 if (wData.list[i]["weather"][0]["main"] == "Rain") {
-                    //console.log(wData.list[i].dt);
                     obj.rain = true;
                     rainf = wData.list[i].rain["3h"];
                 }
                 else {
                     rainf = 0;
                 }
-                //store temperature info
-                //dates.push(wData.list[i].dt_txt);
-                //temperature.push(wData.list[i].main.temp);
-                //windspeed.push(wData.list[i].wind.speed);
                 obj["day"].push({temperature : wData.list[i].main.temp, dates : day, windspeed : wData.list[i].wind.speed, rainfall : rainf});
                 sumtemps = sumtemps + wData.list[i].main.temp;
                 n = n + 1;
             }
         }
+
+        //calculate average temperature and then assign cold, warm or hot
         var avgtemp = sumtemps / n;
-        //console.log(avgtemp);
-        //if(avgte)
+        if(avgtemp <= 10) {
+            obj.climate = "cold";
+        }
+        else if (avgtemp > 10 && avgtemp <= 20) {
+            obj.climate = "warm";
+        }
+        else {
+            obj.climate = "hot";
+        }
         return 1;
-        //res.JSON( {result : 5} );
     }).then(nul => {
-        //console.log("rain = ", rain);
-        console.log("promise.then.then");
-        // res.json( { rain : rain, city : city, country : country, dates : dates, temperature : temperature, windspeed : windspeed, rainfall : rainfall } );
-        console.log(obj);
-        console.log("message sent!");
+        //console.log(obj);
         res.json(obj);
+        console.log("Sent the resulting object to client!");
     })
 }

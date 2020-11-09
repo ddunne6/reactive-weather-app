@@ -24,7 +24,7 @@
             <p><b>Rain?</b> No rain for the next 5 days!</p>
         </div>
 
-        <p><b>What should I pack for?</b> You should pack for a x climate.</p>
+        <p><b>What should I pack for?</b> You should pack for a {{ obj2.climate }} climate.</p>
         <br>
         <p><b>Note:</b> Weather info taken at 12 noon for each day.</p>
 
@@ -32,8 +32,8 @@
             <tr>
                 <th>Dates</th>
                 <th>Rainfall (mm)</th>
-                <th>Temperature (C)</th>
-                <th>Windspeed (km/hr)</th>
+                <th>Temperature (&#8451;)</th>
+                <th>Windspeed (m/s)</th>
             </tr>
             <tr v-for="day in obj2.day">
                 <td>{{ day.dates }}</td>
@@ -66,10 +66,9 @@
         let prom = fetch("/city/" + this.cityNameIp)
         prom.then(response => response.json())
             .then(response => {
-                this.error = response.error; //set to null if there is no error
-                console.log(response);
+                this.error = response.error; //if there is no error then this is just set to NULL
                 this.obj2 = response;
-                console.log(this.obj2);
+                //console.log(this.obj2);
             })
     }
 </script>
