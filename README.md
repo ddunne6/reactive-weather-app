@@ -1,4 +1,12 @@
-# Reactive-Internet-App
-A client-server web which gives weather info using an api. 
+# Reactive Weather App
+A client-server web app which gives weather info using an api from https://openweathermap.org/api.
 
-Simply use Node to run. Open localhost:8000/Client.html to run
+## Run
+
+```npm start```
+
+Open http://localhost:8000/client.html in your web browser
+
+Enter a city, e.g. "New York", and submit
+
+![Screenshot of Weather App](images\screenshot.png)
