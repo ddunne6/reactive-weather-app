@@ -3,10 +3,14 @@ A client-server web app which gives weather info using an api from https://openw
 
 ## Run
 
-```npm start```
+```
+npm start
+```
 
 Open http://localhost:8000/client.html in your web browser
 
 Enter a city, e.g. "New York", and submit
+
+## Preview
 
 ![Screenshot of Weather App](images/screenshot.png)
