@@ -9,4 +9,4 @@ Open http://localhost:8000/client.html in your web browser
 
 Enter a city, e.g. "New York", and submit
 
-![Screenshot of Weather App](images\screenshot.png)
+![Screenshot of Weather App](images/screenshot.png)
